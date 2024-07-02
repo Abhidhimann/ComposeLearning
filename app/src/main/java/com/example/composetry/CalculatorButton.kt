@@ -1,4 +1,4 @@
-package com.example.composetry.ui.theme
+package com.example.composetry
 
 enum class CalculatorButton(val value: String) {
     ONE("1"),

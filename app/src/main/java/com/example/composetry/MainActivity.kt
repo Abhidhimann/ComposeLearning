@@ -1,7 +1,7 @@
 package com.example.composetry
 
 import android.os.Bundle
-import android.widget.EditText
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -15,16 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.composetry.ui.theme.CalculatorButton
+import androidx.compose.ui.unit.times
 import com.example.composetry.ui.theme.ComposeTryTheme
 import javax.script.ScriptEngineManager
 
@@ -33,19 +31,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeTryTheme {
-                DefaultPreview()
+                MainScreen()
             }
         }
     }
 }
-
-interface CalculatorOperations {
-    fun clear()
-    fun write(calculatorButton: CalculatorButton)
-    fun delete()
-    fun calculate()
-}
-
 
 fun evaluateExpression(expression: String): Double? {
     val scriptEngineManager = ScriptEngineManager()
@@ -63,7 +53,7 @@ fun evaluateExpression(expression: String): Double? {
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
+fun MainScreen() {
     val calculatorButtonsList = listOf(
         listOf(
             CalculatorButton.AC,
@@ -97,10 +87,15 @@ fun DefaultPreview() {
         )
     )
     val text = remember { mutableStateOf("") }
-    val textStyleBody1 = TextStyle(fontSize = 60.sp)
+    val textStyleBody1 = TextStyle(fontSize = 80.sp)
     var textStyle by remember { mutableStateOf(textStyleBody1) }
     var readyToDraw by remember { mutableStateOf(false) }
     val errorState = remember { mutableStateOf("") }
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp.dp
+    val surfacePadding = 16.dp
+    val horizontalSpacingInButtons = 6.dp
+    val verticalSpacingInButtons = 9.dp
     val calculatorOperations = object : CalculatorOperations {
         override fun clear() {
             text.value = ""
@@ -137,7 +132,7 @@ fun DefaultPreview() {
 
         override fun delete() {
             text.value = text.value.dropLast(1)
-            if (textStyle.fontSize<textStyleBody1.fontSize) {
+            if (textStyle.fontSize < textStyleBody1.fontSize) {
                 textStyle = textStyle.copy(fontSize = textStyle.fontSize / 0.9)
             }
         }
@@ -153,7 +148,7 @@ fun DefaultPreview() {
                 formattedResult
             } else {
                 errorState.value = CalculatorButton.ERROR.value
-               text.value
+                text.value
             }
 
         }
@@ -166,7 +161,7 @@ fun DefaultPreview() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(surfacePadding),
             verticalArrangement = Arrangement.Bottom,
         ) {
             Box(
@@ -175,9 +170,11 @@ fun DefaultPreview() {
                     .padding(bottom = 20.dp)
                     .background(Color.White),
             ) {
-                Column(modifier = Modifier.fillMaxSize(),
+                Column(
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.End) {
+                    horizontalAlignment = Alignment.End
+                ) {
                     Text(
                         text = text.value,
                         maxLines = 1,
@@ -194,7 +191,7 @@ fun DefaultPreview() {
                             }
                         }
                     )
-                    if(errorState.value==CalculatorButton.ERROR.value) {
+                    if (errorState.value == CalculatorButton.ERROR.value) {
                         Text(
                             text = CalculatorButton.ERROR.value,
                             fontSize = 40.sp
@@ -202,15 +199,16 @@ fun DefaultPreview() {
                     }
                 }
             }
+            Log.i("ABHITAG", "current widht is $screenWidthDp")
             Column(
                 verticalArrangement = Arrangement.Bottom
             ) {
                 calculatorButtonsList.forEach {
                     CalculatorRow(
                         list = it,
-                        buttonSize = 80.dp,
-                        bottomPadding = 6.dp,
-                        horizontalSpacing = 12.dp,
+                        buttonSize = (screenWidthDp - 2 * surfacePadding - 2 * horizontalSpacingInButtons) / 4,
+                        bottomPadding = verticalSpacingInButtons,
+                        horizontalSpacing = horizontalSpacingInButtons,
                         calculatorOperations = calculatorOperations
                     )
                 }
