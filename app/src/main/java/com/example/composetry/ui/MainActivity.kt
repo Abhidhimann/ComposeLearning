@@ -24,7 +24,6 @@ class MainActivity : ComponentActivity() {
         val mealCategoryViewModel: MealCategoryViewModel by viewModels { MealCategoryViewModel.Factory }
         val mealCategoryDetailsViewModel: MealCategoryDetailsViewModel by viewModels { MealCategoryDetailsViewModel.Factory}
         setContent {
-            LazyColumn(content = )
             ComposeTryTheme {
                 MealsApp(mealCategoryViewModel = mealCategoryViewModel, mealCategoryDetailsViewModel =  mealCategoryDetailsViewModel)
             }
@@ -48,7 +47,7 @@ fun MealsApp(mealCategoryViewModel: MealCategoryViewModel, mealCategoryDetailsVi
             arguments = listOf(navArgument(ScreenParam.MEAL_CATEGORY_ID.value) { type = NavType.StringType })
         ) { navBackStackEntry: NavBackStackEntry ->
             MealCategoryDetailsScreen(navBackStackEntry.arguments!!.getString(ScreenParam.MEAL_CATEGORY_ID.value)!!,
-//                mealCategoryDetailsViewModel
+                mealCategoryDetailsViewModel
             )
         }
     }

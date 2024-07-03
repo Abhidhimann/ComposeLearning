@@ -16,9 +16,9 @@ import com.example.composetry.viewModel.MealCategoryDetailsViewModel
 
 @Composable
 fun MealCategoryDetailsScreen(mealCategoryId: String,
-//                              mealCategoryDetailsViewModel: MealCategoryDetailsViewModel
+                              mealCategoryDetailsViewModel: MealCategoryDetailsViewModel
 ){
-    val mealCategoryDetailsViewModel: MealCategoryDetailsViewModel = viewModel()
+//    val mealCategoryDetailsViewModel: MealCategoryDetailsViewModel = viewModel()
     mealCategoryDetailsViewModel.getMealCategoryDetails(mealCategoryId)
     val mealCategoryDetails = mealCategoryDetailsViewModel.mealCategoryDetails.value
     if(mealCategoryDetails==null){
@@ -42,6 +42,6 @@ fun MealCategoryDetailsScreen(mealCategoryId: String,
 @Composable
 fun MealDetailsScreenPreview(){
     MealCategoryDetailsScreen("",
-//        viewModel()
+        viewModel()
     )
 }
